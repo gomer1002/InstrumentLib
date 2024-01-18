@@ -19,3 +19,12 @@ dsox_fsamp = dsx.get_samplerate();
 [preabmle, osc_data] = dsx.read_data();
 ```
 
+
+Считывание данных с анализатора сигналов ROHDE&SCHWARZ FSV
+```
+% % Read data from FSV signal analyzer
+fsv_id = "TCPIP::192.168.2.194::INSTR";
+fsv = FSV(fsv_id);
+[I, Q] = fsv.read_data(2000000, 200000);
+```
+
