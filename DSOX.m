@@ -12,6 +12,11 @@ classdef DSOX
                 obj.instrumentId = instrumentId;
             end
         end
+
+        function instr_ans = idn(obj)
+            instr_obj = visadev(obj.instrumentId);
+            instr_ans = writeread(instr_obj, "*IDN?");
+        end
         
         function [preamble, data] = read_data(obj)
             instr_obj = visadev(obj.instrumentId);
