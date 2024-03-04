@@ -13,6 +13,11 @@ classdef MSO
             end
         end
 
+        function instr_ans = rst(obj)
+            instr_obj = visadev(obj.instrumentId);
+            instr_ans = writeread(instr_obj, "*RST");
+        end
+
         function instr_ans = idn(obj)
             instr_obj = visadev(obj.instrumentId);
             instr_ans = writeread(instr_obj, "*IDN?");
@@ -30,21 +35,21 @@ classdef MSO
             % Установка размера буфера
 %             OSCI_Obj.InputBufferSize = 1000000;
             % Установка времени ожидания
-            instr_obj.Timeout = 5.0;
-            writeline(instr_obj, '*CLS'); disp(writeread(instr_obj, 'SYST:ERR?'));
-            writeline(instr_obj, ':STOP'); disp(writeread(instr_obj, 'SYST:ERR?'));
-            writeline(instr_obj, ':WAVeform:SOURCE CHAN1'); disp(writeread(instr_obj, 'SYST:ERR?'));
+            % instr_obj.Timeout = 5.0;
+            % writeline(instr_obj, '*CLS'); disp(writeread(instr_obj, 'SYST:ERR?'));
+            % writeline(instr_obj, ':STOP'); disp(writeread(instr_obj, 'SYST:ERR?'));
+            writeline(instr_obj, ':WAV:SOUR CHAN1');
             % writeline(instr_obj, ':WAVeform:MODE NORMal'); disp(writeread(instr_obj, 'SYST:ERR?'));
-            writeline(instr_obj, ':TIMEBASE:MODE MAIN'); disp(writeread(instr_obj, 'SYST:ERR?'));
-            writeline(instr_obj, ':ACQUIRE:TYPE NORMAL'); disp(writeread(instr_obj, 'SYST:ERR?'));
-            writeline(instr_obj, ':ACQUIRE:COUNT 4'); disp(writeread(instr_obj, 'SYST:ERR?'));
-            writeline(instr_obj, ':WAVeform:POINTS:MODE RAW'); disp(writeread(instr_obj, 'SYST:ERR?'));
-            writeline(instr_obj, ':WAVeform:POINTS 500000'); disp(writeread(instr_obj, 'SYST:ERR?'));
-            writeline(instr_obj, ':WAVeform:FORMAT WORD'); disp(writeread(instr_obj, 'SYST:ERR?'));
-            writeline(instr_obj, ':WAVeform:BYTEORDER LSBFirst'); disp(writeread(instr_obj, 'SYST:ERR?'));
-            writeline(instr_obj, ':DIGITIZE CHAN1'); disp(writeread(instr_obj, 'SYST:ERR?'));
+            % writeline(instr_obj, ':TIMEBASE:MODE MAIN'); disp(writeread(instr_obj, 'SYST:ERR?'));
+            % writeline(instr_obj, ':ACQUIRE:TYPE NORMAL'); disp(writeread(instr_obj, 'SYST:ERR?'));
+            % writeline(instr_obj, ':ACQUIRE:COUNT 4'); disp(writeread(instr_obj, 'SYST:ERR?'));
+            writeline(instr_obj, ':WAVeform:MODE RAW');
+            writeline(instr_obj, ':WAVeform:FORMat WORD');
+            writeline(instr_obj, ':WAVeform:POINts 2000');
+            % writeline(instr_obj, ':WAVeform:BYTEORDER LSBFirst'); disp(writeread(instr_obj, 'SYST:ERR?'));
+            % writeline(instr_obj, ':DIGITIZE CHAN1'); disp(writeread(instr_obj, 'SYST:ERR?'));
             writeline(instr_obj, ':WAVeform:DATA?');
-            data = readbinblock(instr_obj, 'uint16'); 
+            data = readbinblock(instr_obj, 'uint8'); 
             disp(writeread(instr_obj, 'SYST:ERR?'));
             pream_chars = writeread(instr_obj,':WAVeform:PREamble?');
             pream_str = convertCharsToStrings(pream_chars);

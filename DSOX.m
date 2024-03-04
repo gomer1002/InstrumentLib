@@ -32,7 +32,7 @@ classdef DSOX
             writeline(instr_obj, ':ACQUIRE:TYPE NORMAL'); disp(writeread(instr_obj, 'SYST:ERR?'));
             writeline(instr_obj, ':ACQUIRE:COUNT 4'); disp(writeread(instr_obj, 'SYST:ERR?'));
             writeline(instr_obj, ':WAVeform:POINTS:MODE RAW'); disp(writeread(instr_obj, 'SYST:ERR?'));
-            writeline(instr_obj, ':WAVeform:POINTS 500000'); disp(writeread(instr_obj, 'SYST:ERR?'));
+            writeline(instr_obj, ':WAVeform:POINTS 40000'); disp(writeread(instr_obj, 'SYST:ERR?'));
             writeline(instr_obj, ':WAVeform:FORMAT WORD'); disp(writeread(instr_obj, 'SYST:ERR?'));
             writeline(instr_obj, ':WAVeform:BYTEORDER LSBFirst'); disp(writeread(instr_obj, 'SYST:ERR?'));
             writeline(instr_obj, ':DIGITIZE CHAN1'); disp(writeread(instr_obj, 'SYST:ERR?'));
