@@ -166,7 +166,7 @@ fprintf(WG_obj,command);
 fprintf(WG_obj,'SOURce1:FUNCtion ARB'); 
 
 % настройка отображения в дБм
-command = 'SOURCE1:VOLTage:UNIT DBM ';
+command = 'SOURCE1:VOLTage:UNIT VPP '; % DBM
 fprintf(WG_obj,command);
 
 % Установка амплитуды

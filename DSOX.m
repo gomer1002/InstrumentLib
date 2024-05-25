@@ -18,21 +18,26 @@ classdef DSOX
             instr_ans = writeread(instr_obj, "*IDN?");
         end
         
-        function [preamble, data] = read_data(obj)
+        function [preamble, data] = read_data(obj, points)
             instr_obj = visadev(obj.instrumentId);
+
+            if nargin < 2
+                points = '100000';
+            end
 
             % Установка размера буфера
 %             OSCI_Obj.InputBufferSize = 1000000;
             % Установка времени ожидания
             instr_obj.Timeout = 5.0;
             writeline(instr_obj, '*CLS'); disp(writeread(instr_obj, 'SYST:ERR?'));
-            writeline(instr_obj, ':STOP'); disp(writeread(instr_obj, 'SYST:ERR?'));
+            % disp(writeread(instr_obj, ' :WAVeform:POINts?'));
+            % writeline(instr_obj, ':STOP'); disp(writeread(instr_obj, 'SYST:ERR?'));
             writeline(instr_obj, ':WAVeform:SOURCE CHAN1'); disp(writeread(instr_obj, 'SYST:ERR?'));
             writeline(instr_obj, ':TIMEBASE:MODE MAIN'); disp(writeread(instr_obj, 'SYST:ERR?'));
             writeline(instr_obj, ':ACQUIRE:TYPE NORMAL'); disp(writeread(instr_obj, 'SYST:ERR?'));
             writeline(instr_obj, ':ACQUIRE:COUNT 4'); disp(writeread(instr_obj, 'SYST:ERR?'));
             writeline(instr_obj, ':WAVeform:POINTS:MODE RAW'); disp(writeread(instr_obj, 'SYST:ERR?'));
-            writeline(instr_obj, ':WAVeform:POINTS 40000'); disp(writeread(instr_obj, 'SYST:ERR?'));
+            writeline(instr_obj, ':WAVeform:POINTS MAX'); disp(writeread(instr_obj, 'SYST:ERR?'));
             writeline(instr_obj, ':WAVeform:FORMAT WORD'); disp(writeread(instr_obj, 'SYST:ERR?'));
             writeline(instr_obj, ':WAVeform:BYTEORDER LSBFirst'); disp(writeread(instr_obj, 'SYST:ERR?'));
             writeline(instr_obj, ':DIGITIZE CHAN1'); disp(writeread(instr_obj, 'SYST:ERR?'));
