@@ -29,25 +29,19 @@ classdef MSO
         end
 
         
+        % считывание данных с первого канала
         function [preamble, data] = read_data(obj)
             instr_obj = visadev(obj.instrumentId);
 
-            % Установка размера буфера
-%             OSCI_Obj.InputBufferSize = 1000000;
             % Установка времени ожидания
-            % instr_obj.Timeout = 5.0;
-            % writeline(instr_obj, '*CLS'); disp(writeread(instr_obj, 'SYST:ERR?'));
-            % writeline(instr_obj, ':STOP'); disp(writeread(instr_obj, 'SYST:ERR?'));
-            writeline(instr_obj, ':WAV:SOUR CHAN1');
-            % writeline(instr_obj, ':WAVeform:MODE NORMal'); disp(writeread(instr_obj, 'SYST:ERR?'));
-            % writeline(instr_obj, ':TIMEBASE:MODE MAIN'); disp(writeread(instr_obj, 'SYST:ERR?'));
-            % writeline(instr_obj, ':ACQUIRE:TYPE NORMAL'); disp(writeread(instr_obj, 'SYST:ERR?'));
-            % writeline(instr_obj, ':ACQUIRE:COUNT 4'); disp(writeread(instr_obj, 'SYST:ERR?'));
+            writeline(instr_obj, ':RUN'); disp(writeread(instr_obj, 'SYST:ERR?'));
+            writeline(instr_obj, ':ACQuire:MDEPth 10k');
+            writeline(instr_obj, ':WAVeform:SOURCE CHAN1');
             writeline(instr_obj, ':WAVeform:MODE RAW');
-            writeline(instr_obj, ':WAVeform:FORMat WORD');
-            writeline(instr_obj, ':WAVeform:POINts 2000');
-            % writeline(instr_obj, ':WAVeform:BYTEORDER LSBFirst'); disp(writeread(instr_obj, 'SYST:ERR?'));
-            % writeline(instr_obj, ':DIGITIZE CHAN1'); disp(writeread(instr_obj, 'SYST:ERR?'));
+            writeline(instr_obj, ':WAVeform:FORMAT BYTE');
+            pause(0.5)
+            writeline(instr_obj, ':STOP');
+            pause(0.5)
             writeline(instr_obj, ':WAVeform:DATA?');
             data = readbinblock(instr_obj, 'uint8'); 
             disp(writeread(instr_obj, 'SYST:ERR?'));
@@ -55,13 +49,19 @@ classdef MSO
             pream_str = convertCharsToStrings(pream_chars);
             preamble = str2double(split(pream_str, ',').');
 
-            points = preamble(3);
-            V_incr = preamble(8);
-            V_ref = preamble(10);
+            T_points = preamble(3); % количество считанных точек
+            T_incr = preamble(5); % горизонтальный инкремент
+            T_orig = preamble(6); % горизонтальное смещение
+            V_incr = preamble(8); % вертикальный инкремент
+            V_orig = preamble(9); % вертикальное смещение
+            V_ref = preamble(10); % смещение данных, константа
+            data = (osc_data_raw - V_ref - V_orig) .* V_incr;
+            time = (1 : T_points) .* T_incr + T_orig;
             
             data = (data - V_ref) .* V_incr;
         end
 
+        % получение частоты семплирования
         function sample_rate = get_samplerate(obj)
             instr_obj = visadev(obj.instrumentId);
             sample_rate = str2double(writeread(instr_obj, ':ACQuire:SRATe?'));
